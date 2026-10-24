@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +29,6 @@ body {
   background:#f8d9e4;
   overflow-x:hidden;
 }
-/* Background photo is more visible with a lighter overlay. */
 body::before {
   content:"";
   position:fixed;
@@ -195,8 +193,9 @@ h1 {
 .cake-art {
   width:min(100%,520px);
   margin:5px auto;
+  overflow:visible;
 }
-.cake-svg { width:100%;display:block }
+.cake-svg { width:100%;display:block;overflow:visible }
 .flame {
   transform-box:fill-box;
   transform-origin:center bottom;
@@ -227,7 +226,12 @@ h1 {
 .cut-btn:disabled { background:#e1e7ef;color:#91a0b4;cursor:not-allowed }
 .relight-btn { background:white;border:1px solid #ffc8df;color:#e82f8e }
 .cake-piece { transition:transform .6s ease,opacity .6s ease }
-.cake-piece.moved { transform:translate(42px,-12px) rotate(7deg);opacity:.88 }
+#separateSlice {
+  transform-box:view-box;
+  transform-origin:365px 270px;
+  transition:transform .85s cubic-bezier(.18,.8,.25,1);
+}
+#separateSlice.cut { transform:translate(48px,12px) rotate(12deg) }
 
 /* FAVORITE PHOTO CARDS */
 .section-heading {
@@ -271,29 +275,19 @@ h1 {
   overflow:hidden;
 }
 .memory-img img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .45s;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .45s;
 }
-
-/* Show the complete flower and chocolate pictures without cropping */
-#flowerImg img,
-#chocoImg img {
-  object-fit: contain;
-  background: #fffafd;
+#flowerImg img,#chocoImg img {
+  object-fit:contain;
+  background:#fffafd;
 }
-
-.memory:hover .memory-img img {
-  transform: scale(1.05);
-}
-
-/* Prevent the first two pictures from zooming and getting cropped */
+.memory:hover .memory-img img { transform:scale(1.05) }
 .memory:hover #flowerImg img,
-.memory:hover #chocoImg img {
-  transform: none;
-}
+.memory:hover #chocoImg img { transform:none }
 .memory:hover .memory-img img { transform:scale(1.05) }
 .memory h3 {
   text-align:center;
@@ -713,7 +707,6 @@ footer {
 }
 </style>
 </head>
-
 <body>
 <div id="balloons" aria-hidden="true"></div>
 
@@ -761,13 +754,26 @@ footer {
         <ellipse cx="260" cy="391" rx="195" ry="24" fill="url(#platePink)" stroke="#ff70b6" stroke-width="4"/>
 
         <g id="cakeSlice" class="cake-piece">
-          <rect x="95" y="270" width="330" height="100" rx="17" fill="url(#cakePink)" stroke="#ff70ad" stroke-width="2"/>
-          <path d="M95 270H425V282Q407 311 386 282Q365 311 344 282Q323 311 302 282Q281 311 260 282Q239 311 218 282Q197 311 176 282Q155 311 134 282Q113 311 95 282Z" fill="#ff78a7"/>
+          <!-- Main cake body: the front-right corner is cut away -->
+          <path d="M112 270H365L390 291V353Q390 370 373 370H112Q95 370 95 353V287Q95 270 112 270Z" fill="url(#cakePink)" stroke="#ff70ad" stroke-width="2"/>
+          <path d="M95 270H365L390 291L390 303Q373 323 356 303Q335 323 314 303Q293 323 272 303Q251 323 230 303Q209 323 188 303Q167 323 146 303Q125 323 95 303Z" fill="#ff78a7"/>
+          <!-- Exposed cream and sponge at the cut face -->
+          <path d="M365 270L390 291V353Q390 370 373 370L365 362Z" fill="#ffb4cf" stroke="#ff70ad" stroke-width="1.5"/>
+          <path d="M367 289L388 306M367 315L388 332M367 341L388 358" stroke="#fff1f6" stroke-width="5" stroke-linecap="round"/>
           <g fill="#fb4266">
             <circle cx="120" cy="323" r="5"/><circle cx="166" cy="333" r="4.5"/>
             <circle cx="212" cy="323" r="5"/><circle cx="260" cy="333" r="4.5"/>
-            <circle cx="308" cy="323" r="5"/><circle cx="354" cy="333" r="4.5"/>
-            <circle cx="400" cy="323" r="5"/>
+            <circle cx="308" cy="323" r="5"/>
+          </g>
+          <!-- The slice sits in its original position until the cut button is pressed -->
+          <g id="separateSlice">
+            <path d="M365 270H408Q425 270 425 287V353Q425 370 408 370H373L365 362Z" fill="url(#cakePink)" stroke="#ff70ad" stroke-width="2"/>
+            <path d="M365 270H408Q425 270 425 287V299Q407 320 389 299Q377 310 365 303Z" fill="#ff78a7"/>
+            <path d="M373 370L365 362V270L390 291V353Q390 370 373 370Z" fill="#ffb4cf" stroke="#ff70ad" stroke-width="1.5"/>
+            <path d="M370 290L390 307M370 317L390 334M370 343L389 359" stroke="#fff1f6" stroke-width="5" stroke-linecap="round"/>
+            <g fill="#fb4266">
+              <circle cx="400" cy="323" r="5"/><circle cx="411" cy="344" r="4.5"/>
+            </g>
           </g>
           <rect x="135" y="190" width="250" height="92" rx="15" fill="url(#cakePink)" stroke="#ff70ad" stroke-width="2"/>
           <path d="M135 190H385V202Q369 229 353 202Q337 229 321 202Q305 229 289 202Q273 229 257 202Q241 229 225 202Q209 229 193 202Q177 229 161 202Q145 229 135 202Z" fill="#ff78a7"/>
@@ -808,7 +814,7 @@ footer {
   </div>
 </section>
 
-<!-- FAVORITE THINGS: put your pictures in the images folder -->
+<!-- FAVORITE THINGS -->
 <section class="memories">
   <div class="section-heading">
     <span class="eyebrow">Little things, big smiles</span>
@@ -872,7 +878,7 @@ You deserve beautiful things—not just today, but every day. Happy Birthday, go
       </div>
     </div>
     <button class="main-btn" id="giftBtn" type="button">♧ Open Surprise Box 🎁</button>
-    <div class="gift-reveal" id="giftReveal">🎟️ Your surprise: unlimited hugs, one giant ice-cream date, and a promise to keep making you smile. You can redeem it whenever you want! 🍨💞</div>
+    <div class="gift-reveal" id="giftReveal">🎟️ Your surprise: unlimited memories, one giant ice-cream date, and a promise to keep making you smile. You can redeem it whenever you want! 🍨💞</div>
   </article>
 </section>
 
@@ -932,7 +938,6 @@ You deserve beautiful things—not just today, but every day. Happy Birthday, go
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
 <script>
 const $ = id => document.getElementById(id);
 
@@ -964,7 +969,7 @@ function toast(message) {
   t.textContent = message;
   t.classList.add("show");
   clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => t.classList.remove("show"), 2600);
+  toast.timer = setTimeout(() => t.classList.remove("show"),2600);
 }
 
 function celebrate(count=100) {
@@ -978,8 +983,8 @@ function celebrate(count=100) {
   }
 }
 
-/* Render a local project image or an HTTPS image URL. */
-function applyImage(id, source, emoji) {
+/* Render a local project image or an image URL. */
+function applyImage(id,source,emoji) {
   const el = $(id);
   el.replaceChildren();
 
@@ -1085,13 +1090,14 @@ $("personalForm").addEventListener("submit",e => {
   celebrate(70);
 });
 
-/* Load browser-specific custom settings if they exist. */
+/* Load saved custom settings from this browser. */
 try {
   const saved = localStorage.getItem("birthday-page-settings");
   if (saved) settings = {...defaults,...JSON.parse(saved)};
 } catch (err) {
   console.warn("Could not load saved settings.",err);
 }
+
 render();
 
 /* BIRTHDAY CAKE INTERACTIONS */
@@ -1125,7 +1131,9 @@ $("cutCake").addEventListener("click",() => {
   if (!candlesAreOut || cakeIsCut) return;
 
   cakeIsCut = true;
-  $("cakeSlice").classList.add("moved");
+
+  /* Move the separate slice away from the cake. */
+  $("separateSlice").classList.add("cut");
 
   $("cakeStatus").textContent = "🍰 The first slice is yours. Happy Birthday!";
   $("cakeInstructions").textContent =
@@ -1146,7 +1154,7 @@ $("relightCake").addEventListener("click",() => {
     flame.classList.remove("off");
   });
 
-  $("cakeSlice").classList.remove("moved");
+  $("separateSlice").classList.remove("cut");
   $("blowCandles").disabled = false;
   $("cutCake").disabled = true;
 
@@ -1204,6 +1212,7 @@ $("gift").addEventListener("keydown",e => {
     toggleGift();
   }
 });
+
 $("giftBtn").addEventListener("click",toggleGift);
 
 /* WISH WALL */
